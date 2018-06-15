@@ -1,10 +1,23 @@
 #!/usr/bin/env bash
 
-function main {
+function bootstrap {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
   source "$shome/script/profile"
 
-  uname -a
+  local url_lnav_Darwin="https://github.com/tstack/lnav/releases/download/v${LNAV_VERSION}/lnav-${LNAV_VERSION}-os-x.zip"
+  local url_lnav_Linux="https://github.com/tstack/lnav/releases/download/v${LNAV_VERSION}/lnav-${LNAV_VERSION}-linux-64bit.zip"
+
+  local url_lnav="url_lnav_$(uname -s)"
+  local fnm_lnav="$(basename "${!url_lnav}")"
+  cache curl "$fnm_lnav" "${!url_lnav}"
+
+  mkdir -p "$shome/vendor"
+  pushd "$shome/vendor" >/dev/null
+  unzip -o "${BASEBOX_CACHE}/curl/$fnm_lnav"
+  popd >/dev/null
+
+  mkdir -p "$shome/bin"
+  ln -nfs "$shome/vendor/lnav-${LNAV_VERSION}/lnav" "$shome/bin/lnav"
 }
 
-main "$@"
+bootstrap

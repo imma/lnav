@@ -4,7 +4,7 @@ function version {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
   source "$shome/script/profile"
 
-  local ver_lnav="0.0.1"
+  local ver_lnav="$(lnav -V | awk '{print $NF}' || true)"
   jq -n --arg lnav "$ver_lnav" '{lnav: $lnav}'
 }
 
